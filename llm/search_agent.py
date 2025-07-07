@@ -26,14 +26,14 @@ search_agent = Agent(
     name = "search-agent",
     instructions = INSTRUCTIONS.format(current_date = datetime.now().strftime('%Y-%m-%d')),
     tools = [search_web],
-    output_type = SearchOutput
+    output_type = SearchOutput,
 )
 
 search_tool = search_agent.as_tool(
     tool_name="search-agent",
     tool_description="Run the search agent and return results with a unique agent ID",
     custom_output_extractor=add_search_id,
-)
+    )
 
 if __name__ == "__main__":
     runner = Runner()

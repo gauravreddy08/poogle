@@ -1,12 +1,15 @@
-import { CheckCircle, Loader2, Brain, Search, Lightbulb } from "lucide-react"
+import { CheckCircle, Loader2, Brain, Search, Lightbulb, ExternalLink} from "lucide-react"
 
-export default function AgentWorkflow(props) {
+export default function AgentWorkflow() {
+
+  console.log("Props in AgentWorkflow:", props.stages);
 
   const stages = props.stages || [
-    { id: 'planning', text: 'Planning', status: 'pending' },
-    { id: 'searching', text: 'Spinning up search bots', status: 'pending' },
-    { id: 'gathering', text: 'Gathering thoughts', status: 'pending' }
+    { id: 'planning-011', type: 'planning', text: 'Planning', status: 'pending', queries: [] },
+    { id: 'searching-012', type: 'searching', text: 'Spinning up search bots', status: 'pending', queries: ['Hello Word4', 'Hello Word5', 'Hello Word6'] },
+    { id: 'gathering-013', type: 'gathering', text: 'Gathering thoughts', status: 'pending', queries: [] }
   ];
+
   console.log("Stages used in AgentWorkflow:", stages);
 
   const getIcon = (name) => {
@@ -42,30 +45,76 @@ export default function AgentWorkflow(props) {
     }
   }
 
-  const AnimatedDots = () => (
-    <div className="flex space-x-1 ml-2">
-      <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-      <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-      <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-    </div>
-  )
+  const getIconStyle = (status) => {
+    switch (status) {
+      case 'active':
+        return 'h-4 w-4 text-blue-600'
+      case 'finished':
+        return 'h-4 w-4 text-green-600'
+      case 'pending':
+      default:
+        return 'h-4 w-4 text-gray-600'
+    }
+  }
+
+  
+
+  const getQueries = ( queries ) => {
+    if (queries.length === 0) {
+      return null
+    }
+  
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {queries.map((query, index) => (
+          <div key={index} className="flex items-center border border-gray-600" style={{
+            padding: '1px 4px',
+            fontSize: '10px',
+            gap: '2px',
+            borderRadius: '4px'
+          }}>
+            <Search className="text-gray-500" style={{
+              width: '8px',
+              height: '8px',
+              minWidth: '8px'
+            }} />
+            <a 
+              href={`https://www.google.com/search?q=${encodeURIComponent(query)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 font-mono truncate hover:text-blue-600 hover:underline"
+              style={{
+                maxWidth: '150px',
+                lineHeight: '1.2'
+              }} 
+              title={query}
+            >
+              {query}
+            </a>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm max-w-md">
-      <div className="space-y-3">
+      <div className="space-y-1">
         {stages.map((stage, index) => {
-          const Icon = getIcon(stage.id)
+          const Icon = getIcon(stage.type)
           
           return (
-            <div key={stage.id} className="flex items-center gap-3">
-              {getStatusIcon(stage.status)}
-              <Icon className="h-4 w-4 text-gray-600" />
-              <div className="flex items-center gap-1 flex-1">
-                <span className={`text-sm ${getTextStyle(stage.status)}`}>
-                  {stage.text}
-                </span>
-                {stage.status === 'active' && <AnimatedDots />}
+            <div key={stage.id} className="mb-3"> {/* or mb-[14px] */}
+              <div className="flex items-center gap-3">
+                {getStatusIcon(stage.status)}
+                <Icon className={getIconStyle(stage.status)} />
+                <div className="flex items-center gap-1 flex-1">
+                  <span className={`text-sm ${getTextStyle(stage.status)}`}>
+                    {stage.text}
+                  </span>
+                </div>
               </div>
+              {getQueries(stage.queries)}
             </div>
           )
         })}

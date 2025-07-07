@@ -2,33 +2,28 @@ import chainlit as cl
 import uuid
 from typing import Tuple
 
-class ElementManager:
+class AgentWorkflow:
     def __init__(self, text: str = "Agent is working on your request..."):
         self.text = text
-        self.elements = []
-
-        self.current_element = None
         self.current_message = None
+        self.workflow_element = None  
+        self.stages = []
+    
+    async def init_workflow(self):
+        self.workflow_element = cl.CustomElement(
+            name="AgentWorkflow",
+            props={
+                "stages": self.stages
+            }
+        )
         
-    async def init(self):
         self.current_message = await cl.Message(
             content=self.text,
-            elements=[]
+            elements=[self.workflow_element]
         ).send()
-    
-    async def add(self, element_type: str, props: dict):
-        if self.current_element is None:
-            await self.init()
         
-        if element_type == self.current_element:
-            self.elements[-1].props['data'].extend(props)
-            return
+        return self.workflow_element
         
-        
-        self.current_element = element_type
-        self.current_message.elements.append(cl.CustomElement(
-            name=element_type,
-            props=props))
     
     async def finish(self):
         """Update a specific stage status"""
@@ -56,21 +51,27 @@ class ElementManager:
         await self.finish()
 
         stage = {
-            'id': name, # 'planning', 'searching', 'gathering'
-            
+            'id': f"{name}-{uuid.uuid4()}", # 'planning', 'searching', 'gathering'
+            'type': name,
             'text': text,
-            'status': status # 'pending', 'active', 'finished'
+            'status': status, # 'pending', 'active', 'finished'
+            'queries': []
         }
 
         self.stages.append(stage)
         await self.update()
-
+    
+    async def add_query(self, query: str):
+        if len(self.stages) == 0:
+            return
+        
+        self.stages[-1]['queries'].append(query)
+        await self.update()
+    
     def exists(self, name: str):
         if self.stages:
             last_stage = self.stages[-1]
             return last_stage['id'] == name and last_stage['status'] == 'active'
-
-
 
 def get_element_info(name: str) -> Tuple[str]:
     if name == "search":
@@ -79,3 +80,9 @@ def get_element_info(name: str) -> Tuple[str]:
         return "gathering", "Compling results"
     else:
         return "planning", "Planning"
+
+async def add_query_element(query: str):
+    print("[QUERY] Adding query: ", query)
+    element_manager = cl.user_session.get("element_manager")
+    if element_manager:
+        await element_manager.add_query(query)

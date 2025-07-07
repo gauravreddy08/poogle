@@ -15,7 +15,6 @@ def add_to_memory(id: str) -> str:
     Returns:
         A message indicating the item has been added to memory.
     """
-    print(f"Adding item {id} to shared memory.")
     SHARED_MEMORY.add(id)
     return f"Item '{id}' added to shared memory."
 
@@ -63,7 +62,6 @@ def manage_context(handoff_input_data: HandoffInputData) -> HandoffInputData:
         
         if not should_skip:
             filtered_items += (item,)
-    print(remove_call_id)
 
     return HandoffInputData(
         input_history=handoff_input_data.input_history,

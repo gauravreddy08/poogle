@@ -4,6 +4,7 @@ from firecrawl import FirecrawlApp
 import uuid
 
 from agents import function_tool
+from ui.agent_workflow import add_query_element
 
 import os
 import dotenv
@@ -11,7 +12,7 @@ import dotenv
 dotenv.load_dotenv(override=True)
 
 @function_tool
-def search_web(query: str, fresh: str = "fresh") -> str:
+async def search_web(query: str, fresh: str = "fresh") -> str:
     """
     Search the web for information about the query.
     Returns the markdown content of top results.
@@ -24,6 +25,7 @@ def search_web(query: str, fresh: str = "fresh") -> str:
         The markdown content of top results.
     """
     fresh = data_freshness.get(fresh, 0)
+    await add_query_element(query)
 
     links = get_links(query)
     content = ""
@@ -41,7 +43,7 @@ def get_links(query):
     """Search the web for information about the query"""
     api_key = os.getenv("SERP_API")
     if not api_key:
-        return ["https://example.com"]  # Fallback if no API key
+        return ["https://example.com"] 
     
     params = {
         "engine": "google_light",
@@ -58,7 +60,7 @@ def get_links(query):
         return links
     except Exception as e:
         print(f"Error in web search: {e}")
-        return ["https://example.com"]  # Fallback on error
+        return ["https://example.com"] 
 
 
 def count_tokens(text):

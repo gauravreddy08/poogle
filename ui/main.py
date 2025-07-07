@@ -5,21 +5,27 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import chainlit as cl
 from agents import Runner
 from ui.hooks import MainRunHooks
-from elements import ElementManager
+from ui.agent_workflow import AgentWorkflow, add_query_element
 from llm.research_agent import research_agent
-import time
+import asyncio
 
 @cl.on_message
 async def on_message(msg: cl.Message):
     # Create status manager
-    element_manager = ElementManager()
+    element_manager = AgentWorkflow()
     cl.user_session.set("element_manager", element_manager)
 
     # await element_manager.add("planning", "Hello Word", "active")
-    # time.sleep(2)
+    # await asyncio.sleep(2)
     # await element_manager.add("searching", "Hello Word2", "active")
-    # time.sleep(2)
+    # await asyncio.sleep(2)
+    # await add_query_element("Hello Word2")
+    # await asyncio.sleep(2)
+    # await add_query_element("Hello Word3")
+    # await asyncio.sleep(2)
     # await element_manager.add("gathering", "Hello Word3", "active")
+    # await asyncio.sleep(2)
+    # await element_manager.finish()
 
     # await cl.Message(
     #     content="Lol",  # ← Use result.final_output

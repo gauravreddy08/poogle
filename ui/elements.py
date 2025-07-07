@@ -35,8 +35,9 @@ class ElementManager:
 
         if len(self.stages) == 0:
             return
+        for stage in self.stages:
+            stage['status'] = 'finished'
         
-        self.stages[-1]['status'] = 'finished'
         await self.update()
     
     async def update(self):

@@ -1,7 +1,6 @@
 from serpapi import GoogleSearch
 import tiktoken
 from firecrawl import FirecrawlApp
-import uuid
 
 from agents import function_tool
 from ui.agent_workflow import add_query_element
@@ -49,7 +48,7 @@ def get_links(query):
         "engine": "google_light",
         "google_domain": "google.com",
         "hl": "en",
-        "num": 1,
+        "num": 3,
         "api_key": api_key
     }
     try:

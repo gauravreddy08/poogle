@@ -6,9 +6,7 @@ Multi-agent systems are fascinating. I once asked myself: what can multiple agen
 
 > **Research Insight:** Anthropic's research shows that a multi-agent system with Claude Opus 4 as the lead agent and Claude Sonnet 4 subagents outperformed single-agent Claude Opus 4 by 90.2% on their internal research evaluation.
 
-<p align="center">
-  <img src="/assets/main.png" alt="Multi-Agent System" width="85%">
-</p>
+
 
 Multi-agent architectures are everywhere likely the deep research features from ChatGPT, Gemini, Perplexity and Grok all leverage multi-agent approaches under the hood.
 
@@ -34,10 +32,6 @@ In building my multi-agent search system, I divided the work into three precisel
 
 When designing the lead agent, I thought as an orchestrator would. What would I need?
 
-<p align="center">
-  <img src="/assets/lead-agent.png" alt="Thinking Like an Agent" width="70%">
-</p>
-
 - **Deliberation capability**: A mechanism to ponder and delegate tasks effectively achieved through reasoning abilities and tools to spawn multiple search agents
 - **Quality control**: Search agents might return irrelevant data. Imagine searching for "perplexity loss function" and receiving results about Perplexity the company. Without filtering, this noise could derail the entire system. I built selective storage mechanisms so the lead agent curates what enters shared memory
 - **Iterative exploration**: Search isn't single-shot. Humans build upon previous context, adjusting their trajectory as they learn. My lead agent can also spawn multiple search agents in loops until it finds what it needs. Sometimes it gets curious and explores tangentially (though I do set thresholds)
@@ -47,10 +41,6 @@ When designing the lead agent, I thought as an orchestrator would. What would I 
 > Multi-agent systems consume tokens voraciously. 
 
 My approach: minimize the search model's output. Each search result gets a unique ID. When the research agent identifies useful results, it stores only the ID reference, Python code handles the actual storage. This eliminated redundant token generation where the research agent would otherwise regenerate large result chunks.
-
-<p align="center">
-  <img src="/assets/context-optimization.gif" alt="Optimization" width="100%">
-</p>
 
 > It's like using library call numbers instead of photocopying entire books, you get the same access with a fraction of the overhead.
 
